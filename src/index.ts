@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import RateLimit, { rateLimit } from 'express-rate-limit';
+import errorMiddleware from './middlewares/error.middleware';
 
 const PORT = 3000;
 
@@ -28,7 +29,17 @@ app.post('/', (req: Request, res: Response) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
+  throw new Error('error exits');
   res.json({ message: 'Hello World' });
+});
+
+app.use(errorMiddleware);
+
+// If APIS NotFound
+app.use('*', (_req: Request, res: Response) => {
+  res
+    .status(404)
+    .json({ message: 'Ohh, you are lost, read the API docs to find your way' });
 });
 
 app.listen(PORT, () => {

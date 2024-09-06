@@ -3,8 +3,9 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import RateLimit, { rateLimit } from 'express-rate-limit';
 import errorMiddleware from './middlewares/error.middleware';
-
-const PORT = 3000;
+import config from './config';
+import db from './database';
+const PORT = config.port || 3000;
 
 const app: Application = express();
 
@@ -31,6 +32,20 @@ app.post('/', (req: Request, res: Response) => {
 app.get('/', (req: Request, res: Response) => {
   throw new Error('error exits');
   res.json({ message: 'Hello World' });
+});
+
+// test db
+db.connect().then((client) => {
+  return client
+    .query('SELECT NOW()')
+    .then((res) => {
+      client.release();
+      console.log('Connected to the database', res.rows[0].now);
+    })
+    .catch((err) => {
+      client.release();
+      console.log(err.sta);
+    });
 });
 
 app.use(errorMiddleware);

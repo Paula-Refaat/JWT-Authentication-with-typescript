@@ -5,6 +5,8 @@ import RateLimit, { rateLimit } from 'express-rate-limit';
 import errorMiddleware from './middlewares/error.middleware';
 import config from './config';
 // import db from './database';
+import routes from './routes';
+
 const PORT = config.port || 3000;
 
 const app: Application = express();
@@ -24,6 +26,8 @@ app.use(
     message: 'Too many requests, please try again later',
   }),
 );
+
+app.use('/api/v1', routes);
 
 app.post('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello World', data: req.body });

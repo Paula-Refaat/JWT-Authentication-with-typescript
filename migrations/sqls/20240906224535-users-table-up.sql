@@ -1,4 +1,5 @@
 /* Replace with your SQL commands */
+-- Create table user
 
 Create TABLE users(
     id SERIAL PRIMARY KEY,

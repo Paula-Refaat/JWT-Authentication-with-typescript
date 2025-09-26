@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   env: {
     es2021: true,
     node: true,
@@ -16,7 +16,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     'prettier/prettier': 2, // Means error
-    semi: ['error', 'never'],
+    semi: ['error', 'single'],
     quotes: ['error', 'single'],
     'no-console': 0,
     'no-var': 'error',

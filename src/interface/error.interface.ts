@@ -1,8 +1,7 @@
-interface Error {
+interface IError {
   name?: string;
-  stack?: string;
   message?: string;
+  stack?: string;
   status?: number;
 }
-
-export default Error;
+export default IError;

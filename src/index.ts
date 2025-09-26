@@ -1,64 +1,55 @@
 import express, { Application, Request, Response } from 'express';
-import morgan from 'morgan';
 import helmet from 'helmet';
-import RateLimit, { rateLimit } from 'express-rate-limit';
-import errorMiddleware from './middlewares/error.middleware';
-import config from './config';
-// import db from './database';
+import morgan from 'morgan';
+import { rateLimit } from 'express-rate-limit';
 import routes from './routes';
+import errorMiddleware from './middleware/error.middleware';
+import config from './config';
+const PORT: Number = parseInt(config.port as string, 10) || 8000;
 
-const PORT = config.port || 3000;
-
+// create instant from server
 const app: Application = express();
-
-app.use(express.json());
-
+app.use(express.json()); // for parsing application/json
 app.use(morgan('common'));
 
-app.use(helmet());
-
+app.use(helmet()); // security
 app.use(
   rateLimit({
-    windowMs: 60 * 60 * 1000,
-    max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: 'Too many requests, please try again later',
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    standardHeaders: true, // include rate limit headers in the response (default is false)
+    legacyHeaders: false, // disable the `X-RateLimit-*` headers (default is true)
+    message:
+      'Too many requests from this IP, please try again after 15 minutes',
   }),
 );
-
+app.get("/", (req, res) => {
+    res.status(200).json({
+      message: "DONNNNNNNNNNNNNNNNNNNE"
+    });
+})
 app.use('/api/v1', routes);
 
-app.post('/', (req: Request, res: Response) => {
-  res.json({ message: 'Hello World', data: req.body });
-});
-
-app.get('/', (req: Request, res: Response) => {
-  throw new Error('error exits');
-  res.json({ message: 'Hello World' });
-});
-
-// test db
+// // test db
 // db.connect().then((client) => {
-//   return client
-//     .query('SELECT NOW()')
+//   client
+//     .query('SELECT  NOW()')
 //     .then((res) => {
 //       client.release();
-//       console.log('Connected to the database', res.rows[0].now);
+//       console.log(res.rows);
 //     })
 //     .catch((err) => {
 //       client.release();
-//       console.log(err.sta);
+//       console.log(err.stack);
 //     });
 // });
 
 app.use(errorMiddleware);
 
-// If APIS NotFound
-app.use('*', (_req: Request, res: Response) => {
-  res
-    .status(404)
-    .json({ message: 'Ohh, you are lost, read the API docs to find your way' });
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({
+    message: 'you are lost , read api doc to find your way back home',
+  });
 });
 
 app.listen(PORT, () => {
